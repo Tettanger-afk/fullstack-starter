@@ -14,6 +14,7 @@ import (
 // TemplateData is the generic data bag passed to every template.
 type TemplateData struct {
 	Title         string
+	CurrentPath   string
 	Plans         []database.Plan
 	Plan          *database.Plan
 	Tasks         []database.Task
@@ -90,7 +91,26 @@ func NewMux(db *database.DB) http.Handler {
 					return "secondary"
 				}
 			},
-			"eq": func(a, b string) bool { return a == b },
+			"statusIcon": func(status string) string {
+				switch status {
+				case "not_started":
+					return "bi-circle"
+				case "in_progress":
+					return "bi-arrow-repeat"
+				case "completed":
+					return "bi-check-circle-fill"
+				default:
+					return "bi-circle"
+				}
+			},
+			"completionPct": func(completed, total int) int {
+				if total == 0 {
+					return 0
+				}
+				return completed * 100 / total
+			},
+			"hasPrefix": strings.HasPrefix,
+			"eq":        func(a, b string) bool { return a == b },
 		},
 	}
 
@@ -128,7 +148,8 @@ func NewMux(db *database.DB) http.Handler {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-func (h *Handler) render(w http.ResponseWriter, page string, data TemplateData) {
+func (h *Handler) render(w http.ResponseWriter, r *http.Request, page string, data TemplateData) {
+	data.CurrentPath = r.URL.Path
 	t, err := template.New("").Funcs(h.funcMap).ParseFiles(
 		"templates/layout.html",
 		"templates/"+page+".html",
@@ -146,7 +167,7 @@ func (h *Handler) render(w http.ResponseWriter, page string, data TemplateData) 
 
 func (h *Handler) notFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	h.render(w, "404", TemplateData{Title: "404 – Page Not Found"})
+	h.render(w, r, "404", TemplateData{Title: "404 – Page Not Found"})
 }
 
 func parseID(r *http.Request) (int64, error) {
@@ -156,7 +177,7 @@ func parseID(r *http.Request) (int64, error) {
 // ─── Landing ──────────────────────────────────────────────────────────────────
 
 func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "index", TemplateData{Title: "Home"})
+	h.render(w, r, "index", TemplateData{Title: "Home"})
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
@@ -165,7 +186,7 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 	stats, _ := h.db.GetTaskStats()
 	overdue, _ := h.db.GetOverdueTasks()
 	upcoming, _ := h.db.GetUpcomingTasks()
-	h.render(w, "dashboard", TemplateData{
+	h.render(w, r, "dashboard", TemplateData{
 		Title:         "Dashboard",
 		Stats:         stats,
 		OverdueTasks:  overdue,
@@ -177,11 +198,11 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) plansIndex(w http.ResponseWriter, r *http.Request) {
 	plans, _ := h.db.GetAllPlans()
-	h.render(w, "plans_index", TemplateData{Title: "My Plans", Plans: plans})
+	h.render(w, r, "plans_index", TemplateData{Title: "My Plans", Plans: plans})
 }
 
 func (h *Handler) plansNew(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "plans_new", TemplateData{Title: "Create Plan"})
+	h.render(w, r, "plans_new", TemplateData{Title: "Create Plan"})
 }
 
 func (h *Handler) plansCreate(w http.ResponseWriter, r *http.Request) {
@@ -193,11 +214,11 @@ func (h *Handler) plansCreate(w http.ResponseWriter, r *http.Request) {
 	description := strings.TrimSpace(r.FormValue("description"))
 
 	if title == "" {
-		h.render(w, "plans_new", TemplateData{Title: "Create Plan", Error: "Title is required."})
+		h.render(w, r, "plans_new", TemplateData{Title: "Create Plan", Error: "Title is required."})
 		return
 	}
 	if _, err := h.db.CreatePlan(title, description); err != nil {
-		h.render(w, "plans_new", TemplateData{Title: "Create Plan", Error: "Failed to create plan."})
+		h.render(w, r, "plans_new", TemplateData{Title: "Create Plan", Error: "Failed to create plan."})
 		return
 	}
 	http.Redirect(w, r, "/plans", http.StatusSeeOther)
@@ -215,7 +236,7 @@ func (h *Handler) planShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tasks, _ := h.db.GetTasksByPlanID(id)
-	h.render(w, "plans_show", TemplateData{Title: plan.Title, Plan: plan, Tasks: tasks})
+	h.render(w, r, "plans_show", TemplateData{Title: plan.Title, Plan: plan, Tasks: tasks})
 }
 
 func (h *Handler) planDelete(w http.ResponseWriter, r *http.Request) {
@@ -239,7 +260,7 @@ func (h *Handler) tasksIndex(w http.ResponseWriter, r *http.Request) {
 	tasks, _ := h.db.GetAllTasks(filters)
 	plans, _ := h.db.GetAllPlans()
 	categories, _ := h.db.GetCategories()
-	h.render(w, "tasks_index", TemplateData{
+	h.render(w, r, "tasks_index", TemplateData{
 		Title:      "My Tasks",
 		Tasks:      tasks,
 		Plans:      plans,
@@ -250,7 +271,7 @@ func (h *Handler) tasksIndex(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) tasksNew(w http.ResponseWriter, r *http.Request) {
 	plans, _ := h.db.GetAllPlans()
-	h.render(w, "tasks_new", TemplateData{Title: "Create Task", Plans: plans})
+	h.render(w, r, "tasks_new", TemplateData{Title: "Create Task", Plans: plans})
 }
 
 func (h *Handler) tasksCreate(w http.ResponseWriter, r *http.Request) {
@@ -268,14 +289,14 @@ func (h *Handler) tasksCreate(w http.ResponseWriter, r *http.Request) {
 	planID, err := strconv.ParseInt(planIDStr, 10, 64)
 	if title == "" || err != nil {
 		plans, _ := h.db.GetAllPlans()
-		h.render(w, "tasks_new", TemplateData{
+		h.render(w, r, "tasks_new", TemplateData{
 			Title: "Create Task", Plans: plans, Error: "Title and plan are required.",
 		})
 		return
 	}
 	if _, err := h.db.CreateTask(planID, title, notes, category, status, dueDate); err != nil {
 		plans, _ := h.db.GetAllPlans()
-		h.render(w, "tasks_new", TemplateData{
+		h.render(w, r, "tasks_new", TemplateData{
 			Title: "Create Task", Plans: plans, Error: "Failed to create task.",
 		})
 		return
@@ -294,7 +315,7 @@ func (h *Handler) taskShow(w http.ResponseWriter, r *http.Request) {
 		h.notFound(w, r)
 		return
 	}
-	h.render(w, "tasks_show", TemplateData{Title: task.Title, Task: task})
+	h.render(w, r, "tasks_show", TemplateData{Title: task.Title, Task: task})
 }
 
 func (h *Handler) taskUpdateStatus(w http.ResponseWriter, r *http.Request) {

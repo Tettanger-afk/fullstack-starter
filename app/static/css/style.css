@@ -1,3 +1,5 @@
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+
 body {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   min-height: 100vh;
@@ -9,7 +11,24 @@ a {
   color: #6ea8fe;
 }
 
-/* Cards */
+/* ─── Navbar ───────────────────────────────────────────────────────────────── */
+
+.navbar-brand {
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+
+.navbar-nav .nav-link {
+  transition: color 0.15s ease;
+}
+
+.navbar-nav .nav-link.active {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* ─── Cards ────────────────────────────────────────────────────────────────── */
+
 .card {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   border: none;
@@ -21,39 +40,116 @@ a {
   border-bottom: none;
 }
 
-.card-header a {
-  color: white;
+.card-header a,
+.card-header .btn-outline-light,
+.card-header .btn-outline-secondary {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Navbar */
-.navbar-brand {
-  font-size: 1.4rem;
-  letter-spacing: 1px;
-}
-
-/* Breadcrumbs */
-.breadcrumb-item.active {
+.card-header .btn-outline-light:hover,
+.card-header .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
 }
 
-.breadcrumb-item a {
-  color: rgba(255, 255, 255, 0.6);
+.plan-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.breadcrumb-item + .breadcrumb-item::before {
-  color: rgba(255, 255, 255, 0.4);
+.plan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-/* List groups */
+/* ─── Dashboard stat cards ─────────────────────────────────────────────────── */
+
+.stat-card {
+  transition: transform 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ─── List groups ───────────────────────────────────────────────────────────── */
+
 .list-group-item {
   background-color: #fff;
+  transition: background-color 0.1s ease;
 }
 
 .list-group-item:hover {
   background-color: #f8f9fa;
 }
 
-/* Status badges */
+/* ─── Completed task styling ───────────────────────────────────────────────── */
+
+.task-completed {
+  opacity: 0.6;
+}
+
+.task-completed .task-title {
+  text-decoration: line-through;
+  text-decoration-color: #6c757d;
+}
+
+.task-completed:hover {
+  opacity: 0.8;
+}
+
+/* ─── Due-date badges ───────────────────────────────────────────────────────── */
+
+.due-soon {
+  background-color: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffda6a;
+}
+
+/* ─── Status badge text fix ─────────────────────────────────────────────────── */
+
 .badge.bg-warning {
   color: #333;
+}
+
+/* ─── Breadcrumbs ───────────────────────────────────────────────────────────── */
+
+.breadcrumb-item.active {
+  color: #fff;
+}
+
+.breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ─── Progress bars ─────────────────────────────────────────────────────────── */
+
+.progress {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.card .progress {
+  background-color: #e9ecef;
+}
+
+/* ─── Footer ────────────────────────────────────────────────────────────────── */
+
+footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }

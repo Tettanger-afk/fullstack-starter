@@ -7,6 +7,7 @@
   <title>{{.Title}} | PlanIT</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -14,6 +15,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand fw-bold fs-4" href="/">
+        <i class="bi bi-kanban-fill text-primary"></i>
         <span class="text-primary">Plan</span><span class="text-white">IT</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
@@ -21,12 +23,30 @@
       </button>
       <div class="collapse navbar-collapse" id="navMain">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="/plans">Plans</a></li>
-          <li class="nav-item"><a class="nav-link" href="/tasks">Tasks</a></li>
+          <li class="nav-item">
+            <a class="nav-link {{if eq .CurrentPath "/"}}active{{end}}" href="/">
+              <i class="bi bi-house-door me-1"></i>Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{if hasPrefix .CurrentPath "/dashboard"}}active{{end}}" href="/dashboard">
+              <i class="bi bi-speedometer2 me-1"></i>Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{if hasPrefix .CurrentPath "/plans"}}active{{end}}" href="/plans">
+              <i class="bi bi-folder2 me-1"></i>Plans
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{if hasPrefix .CurrentPath "/tasks"}}active{{end}}" href="/tasks">
+              <i class="bi bi-list-check me-1"></i>Tasks
+            </a>
+          </li>
         </ul>
-        <a href="/tasks/new" class="btn btn-primary btn-sm">+ Add Task</a>
+        <a href="/tasks/new" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-lg me-1"></i>Add Task
+        </a>
       </div>
     </div>
   </nav>
@@ -37,11 +57,13 @@
 
   <footer class="bg-dark text-white-50 mt-auto">
     <div class="container py-3">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col-md-6">
-          <strong class="text-white">PlanIT</strong> &mdash; CS 408 &bull; Spring 2026
+          <i class="bi bi-kanban-fill text-primary me-1"></i>
+          <strong class="text-white">PlanIT</strong>
+          <span class="ms-2">&mdash; CS 408 &bull; Spring 2026</span>
         </div>
-        <div class="col-md-6 text-md-end small">
+        <div class="col-md-6 text-md-end small mt-1 mt-md-0">
           Andy Lopez-Martinez &bull; Alexander Huett &bull; Tyler Thrun
         </div>
       </div>

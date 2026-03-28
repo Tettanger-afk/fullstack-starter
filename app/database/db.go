@@ -14,12 +14,13 @@ type DB struct {
 
 // Plan represents a high-level plan that groups related tasks.
 type Plan struct {
-	ID          int64
-	Title       string
-	Description string
-	CreatedAt   string
-	Archived    int
-	TaskCount   int
+	ID             int64
+	Title          string
+	Description    string
+	CreatedAt      string
+	Archived       int
+	TaskCount      int
+	CompletedCount int
 }
 
 // Task represents a single actionable item belonging to a plan.
@@ -174,11 +175,12 @@ func (db *DB) ClearDatabase() {
 
 // ─── Plans ────────────────────────────────────────────────────────────────────
 
-// GetAllPlans returns all non-archived plans with their task counts.
+// GetAllPlans returns all non-archived plans with their task and completion counts.
 func (db *DB) GetAllPlans() ([]Plan, error) {
 	rows, err := db.conn.Query(`
 		SELECT p.id, p.title, COALESCE(p.description,''), p.created_at, p.archived,
-		       COUNT(t.id) AS task_count
+		       COUNT(t.id) AS task_count,
+		       SUM(CASE WHEN t.status = 'completed' THEN 1 ELSE 0 END) AS completed_count
 		FROM plans p
 		LEFT JOIN tasks t ON t.plan_id = p.id AND t.archived = 0
 		WHERE p.archived = 0
@@ -192,7 +194,8 @@ func (db *DB) GetAllPlans() ([]Plan, error) {
 	var plans []Plan
 	for rows.Next() {
 		var p Plan
-		if err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.CreatedAt, &p.Archived, &p.TaskCount); err != nil {
+		if err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.CreatedAt, &p.Archived,
+			&p.TaskCount, &p.CompletedCount); err != nil {
 			return nil, err
 		}
 		plans = append(plans, p)

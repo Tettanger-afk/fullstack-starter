@@ -1,39 +1,70 @@
 {{define "content"}}
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h2 class="text-white mb-0">My Plans</h2>
-  <a href="/plans/new" class="btn btn-primary">+ New Plan</a>
+  <h2 class="text-white mb-0">
+    <i class="bi bi-folder2 me-2"></i>My Plans
+  </h2>
+  <a href="/plans/new" class="btn btn-primary">
+    <i class="bi bi-plus-lg me-1"></i>New Plan
+  </a>
 </div>
 
 {{if not .Plans}}
 <div class="card text-center py-5">
   <div class="card-body text-muted">
+    <i class="bi bi-folder2-open display-4 d-block mb-3 opacity-50"></i>
     <h5>No plans yet</h5>
     <p>Create your first plan to start organizing your tasks.</p>
-    <a href="/plans/new" class="btn btn-primary">Create a Plan</a>
+    <a href="/plans/new" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Create a Plan
+    </a>
   </div>
 </div>
 {{else}}
 <div class="row g-4">
   {{range .Plans}}
   <div class="col-md-6 col-lg-4">
-    <div class="card h-100">
+    <div class="card h-100 plan-card">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0 text-truncate me-2">
           <a href="/plans/{{.ID}}" class="text-white text-decoration-none">{{.Title}}</a>
         </h5>
-        <span class="badge bg-light text-dark flex-shrink-0">{{.TaskCount}} task{{if ne .TaskCount 1}}s{{end}}</span>
+        <span class="badge bg-white bg-opacity-25 flex-shrink-0">
+          {{.TaskCount}} task{{if ne .TaskCount 1}}s{{end}}
+        </span>
       </div>
       <div class="card-body">
         {{if .Description}}
-        <p class="text-muted small mb-2">{{.Description}}</p>
+        <p class="text-muted small mb-3">{{.Description}}</p>
         {{end}}
-        <p class="text-muted small mb-0">Created {{formatDate .CreatedAt}}</p>
+
+        {{if gt .TaskCount 0}}
+        <div class="mb-2">
+          <div class="d-flex justify-content-between mb-1">
+            <small class="text-muted">Progress</small>
+            <small class="text-muted">{{.CompletedCount}}/{{.TaskCount}}</small>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-success" role="progressbar"
+                 style="width: {{completionPct .CompletedCount .TaskCount}}%"
+                 aria-valuenow="{{completionPct .CompletedCount .TaskCount}}"
+                 aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        {{end}}
+
+        <p class="text-muted small mb-0">
+          <i class="bi bi-calendar3 me-1"></i>Created {{formatDate .CreatedAt}}
+        </p>
       </div>
       <div class="card-footer d-flex justify-content-between">
-        <a href="/plans/{{.ID}}" class="btn btn-sm btn-outline-primary">View Tasks</a>
+        <a href="/plans/{{.ID}}" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-eye me-1"></i>View Tasks
+        </a>
         <form action="/plans/{{.ID}}/delete" method="POST"
               onsubmit="return confirm('Delete this plan and all its tasks?')">
-          <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+          <button type="submit" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash3 me-1"></i>Delete
+          </button>
         </form>
       </div>
     </div>
