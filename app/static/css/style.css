@@ -1,0 +1,59 @@
+body {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+}
+
+a {
+  color: #6ea8fe;
+}
+
+/* Cards */
+.card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: none;
+}
+
+.card-header a {
+  color: white;
+}
+
+/* Navbar */
+.navbar-brand {
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+
+/* Breadcrumbs */
+.breadcrumb-item.active {
+  color: #fff;
+}
+
+.breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* List groups */
+.list-group-item {
+  background-color: #fff;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Status badges */
+.badge.bg-warning {
+  color: #333;
+}

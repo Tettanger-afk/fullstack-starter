@@ -1,0 +1,34 @@
+{{define "content"}}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">Create New Plan</h4>
+      </div>
+      <div class="card-body">
+        {{if .Error}}
+        <div class="alert alert-danger">{{.Error}}</div>
+        {{end}}
+        <form action="/plans" method="POST">
+          <div class="mb-3">
+            <label for="title" class="form-label">Plan Title <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="title" name="title"
+                   placeholder="e.g. CS 408 Project" required>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">
+              Description <span class="text-muted">(optional)</span>
+            </label>
+            <textarea class="form-control" id="description" name="description" rows="3"
+                      placeholder="What is this plan about?"></textarea>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Create Plan</button>
+            <a href="/plans" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

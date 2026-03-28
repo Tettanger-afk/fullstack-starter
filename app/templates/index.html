@@ -1,0 +1,77 @@
+{{define "content"}}
+<div class="py-5 text-center text-white">
+  <h1 class="display-3 fw-bold mb-3">Welcome to <span class="text-warning">PlanIT</span></h1>
+  <p class="lead mb-4 text-white-50">A lightweight task management system built for college students.</p>
+  <div class="d-flex justify-content-center gap-3 flex-wrap">
+    <a href="/tasks/new" class="btn btn-primary btn-lg">Create a Task</a>
+    <a href="/plans/new" class="btn btn-outline-light btn-lg">Create a Plan</a>
+    <a href="/dashboard" class="btn btn-outline-warning btn-lg">View Dashboard</a>
+  </div>
+</div>
+
+<div class="row g-4 mt-2">
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="mb-0">Who is PlanIT for?</h5>
+      </div>
+      <div class="card-body text-muted">
+        <ul class="mb-0">
+          <li>College students balancing classes, assignments, and deadlines</li>
+          <li>Student groups collaborating on shared projects</li>
+          <li>Study groups coordinating schedules and responsibilities</li>
+          <li>Anyone who wants a simple, no-frills task organizer</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="mb-0">Why use PlanIT?</h5>
+      </div>
+      <div class="card-body text-muted">
+        <ul class="mb-0">
+          <li>Organize tasks into plans (e.g., by class or project)</li>
+          <li>Track status: Not Started, In Progress, Completed</li>
+          <li>Filter and sort by category, plan, or due date</li>
+          <li>Simple interface &mdash; no learning curve required</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-md-4">
+    <div class="card text-center h-100">
+      <div class="card-body py-4">
+        <div class="display-5 mb-2">📋</div>
+        <h5>Create Plans</h5>
+        <p class="text-muted small">Group related tasks into plans like "CS 408 Project" or "Study Schedule".</p>
+        <a href="/plans/new" class="btn btn-sm btn-outline-primary">New Plan</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center h-100">
+      <div class="card-body py-4">
+        <div class="display-5 mb-2">✅</div>
+        <h5>Manage Tasks</h5>
+        <p class="text-muted small">Add tasks with due dates, categories, and notes. Track progress easily.</p>
+        <a href="/tasks/new" class="btn btn-sm btn-outline-success">New Task</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center h-100">
+      <div class="card-body py-4">
+        <div class="display-5 mb-2">📊</div>
+        <h5>Stay on Track</h5>
+        <p class="text-muted small">View your dashboard for overdue alerts, upcoming deadlines, and progress stats.</p>
+        <a href="/dashboard" class="btn btn-sm btn-outline-warning">Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

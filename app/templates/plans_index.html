@@ -1,0 +1,44 @@
+{{define "content"}}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="text-white mb-0">My Plans</h2>
+  <a href="/plans/new" class="btn btn-primary">+ New Plan</a>
+</div>
+
+{{if not .Plans}}
+<div class="card text-center py-5">
+  <div class="card-body text-muted">
+    <h5>No plans yet</h5>
+    <p>Create your first plan to start organizing your tasks.</p>
+    <a href="/plans/new" class="btn btn-primary">Create a Plan</a>
+  </div>
+</div>
+{{else}}
+<div class="row g-4">
+  {{range .Plans}}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-truncate me-2">
+          <a href="/plans/{{.ID}}" class="text-white text-decoration-none">{{.Title}}</a>
+        </h5>
+        <span class="badge bg-light text-dark flex-shrink-0">{{.TaskCount}} task{{if ne .TaskCount 1}}s{{end}}</span>
+      </div>
+      <div class="card-body">
+        {{if .Description}}
+        <p class="text-muted small mb-2">{{.Description}}</p>
+        {{end}}
+        <p class="text-muted small mb-0">Created {{formatDate .CreatedAt}}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <a href="/plans/{{.ID}}" class="btn btn-sm btn-outline-primary">View Tasks</a>
+        <form action="/plans/{{.ID}}/delete" method="POST"
+              onsubmit="return confirm('Delete this plan and all its tasks?')">
+          <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {{end}}
+</div>
+{{end}}
+{{end}}

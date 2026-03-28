@@ -1,0 +1,71 @@
+{{define "content"}}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/tasks" class="text-white-50">Tasks</a></li>
+        <li class="breadcrumb-item active text-white">{{.Task.Title}}</li>
+      </ol>
+    </nav>
+
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">{{.Task.Title}}</h4>
+        <span class="badge bg-{{statusBadge .Task.Status}} fs-6">{{statusLabel .Task.Status}}</span>
+      </div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          {{if .Task.PlanTitle}}
+          <dt class="col-sm-3 text-muted">Plan</dt>
+          <dd class="col-sm-9">
+            <a href="/plans/{{.Task.PlanID}}">{{.Task.PlanTitle}}</a>
+          </dd>
+          {{end}}
+          {{if .Task.Category}}
+          <dt class="col-sm-3 text-muted">Category</dt>
+          <dd class="col-sm-9"><span class="badge bg-secondary">{{.Task.Category}}</span></dd>
+          {{end}}
+          {{if .Task.DueDate}}
+          <dt class="col-sm-3 text-muted">Due Date</dt>
+          <dd class="col-sm-9
+            {{if isOverdue .Task.DueDate .Task.Status}}text-danger fw-semibold
+            {{else if isDueSoon .Task.DueDate .Task.Status}}text-warning{{end}}">
+            {{if isOverdue .Task.DueDate .Task.Status}}&#9888; Overdue: {{end}}
+            {{if isDueSoon .Task.DueDate .Task.Status}}&#9200; Due soon: {{end}}
+            {{formatDate .Task.DueDate}}
+          </dd>
+          {{end}}
+          <dt class="col-sm-3 text-muted">Created</dt>
+          <dd class="col-sm-9">{{formatDate .Task.CreatedAt}}</dd>
+          {{if .Task.Notes}}
+          <dt class="col-sm-3 text-muted">Notes</dt>
+          <dd class="col-sm-9">{{.Task.Notes}}</dd>
+          {{end}}
+        </dl>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header"><h5 class="mb-0">Update Status</h5></div>
+      <div class="card-body">
+        <form action="/tasks/{{.Task.ID}}/status" method="POST" class="d-flex gap-2 align-items-center">
+          <select class="form-select" name="status">
+            <option value="not_started" {{if eq .Task.Status "not_started"}}selected{{end}}>Not Started</option>
+            <option value="in_progress"  {{if eq .Task.Status "in_progress"}}selected{{end}}>In Progress</option>
+            <option value="completed"    {{if eq .Task.Status "completed"}}selected{{end}}>Completed</option>
+          </select>
+          <button type="submit" class="btn btn-primary text-nowrap">Save Status</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <a href="/tasks" class="btn btn-outline-secondary">&larr; Back to Tasks</a>
+      <form action="/tasks/{{.Task.ID}}/delete" method="POST"
+            onsubmit="return confirm('Delete this task permanently?')">
+        <button type="submit" class="btn btn-danger">Delete Task</button>
+      </form>
+    </div>
+  </div>
+</div>
+{{end}}

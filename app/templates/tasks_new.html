@@ -1,0 +1,70 @@
+{{define "content"}}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">Create New Task</h4>
+      </div>
+      <div class="card-body">
+        {{if .Error}}
+        <div class="alert alert-danger">{{.Error}}</div>
+        {{end}}
+        <form action="/tasks" method="POST">
+          <div class="mb-3">
+            <label for="title" class="form-label">Task Title <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="title" name="title"
+                   placeholder="e.g. Submit lab assignment" required>
+          </div>
+          <div class="mb-3">
+            <label for="plan_id" class="form-label">Plan <span class="text-danger">*</span></label>
+            <select class="form-select" id="plan_id" name="plan_id" required>
+              <option value="">Select a plan...</option>
+              {{range .Plans}}
+              <option value="{{.ID}}">{{.Title}}</option>
+              {{end}}
+            </select>
+            <div class="form-text">
+              Don't have a plan? <a href="/plans/new">Create one first</a>.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="notes" class="form-label">
+              Notes <span class="text-muted">(optional)</span>
+            </label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"
+                      placeholder="Add any extra details..."></textarea>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category" name="category">
+                <option value="">None</option>
+                <option value="School">School</option>
+                <option value="Work">Work</option>
+                <option value="Personal">Personal</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" id="status" name="status">
+                <option value="not_started">Not Started</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="due_date" class="form-label">Due Date</label>
+              <input type="date" class="form-control" id="due_date" name="due_date">
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Create Task</button>
+            <a href="/tasks" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

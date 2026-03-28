@@ -1,41 +1,40 @@
 # Build stage
-FROM node:alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy Go module files first for better layer caching
+COPY go.mod ./
 
-# Install dependencies
-RUN npm ci
+# Copy source and download/verify dependencies
+COPY . .
+RUN go mod tidy
+RUN CGO_ENABLED=0 GOOS=linux go build -o planit .
 
 # Production stage
-FROM node:alpine
+FROM alpine:latest
 
 WORKDIR /app
 
-# Install dumb-init to handle signals properly
-RUN apk add --no-cache dumb-init
+# Install ca-certificates for HTTPS and wget for healthcheck
+RUN apk add --no-cache ca-certificates wget tzdata
 
-# Copy only production dependencies from builder
-COPY --from=builder /app/node_modules ./node_modules
+# Copy compiled binary from builder
+COPY --from=builder /app/planit .
 
-# Copy application files
-COPY package*.json ./
-COPY src ./src
+# Copy templates and static assets
+COPY templates ./templates
+COPY static ./static
 
-# Create data directory
+# Create data directory for SQLite database
 RUN mkdir -p /app/data
 
 # Expose port
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -q -O /dev/null http://localhost:3000/ || exit 1
 
-# Use dumb-init to handle signals
-ENTRYPOINT ["dumb-init", "--"]
-
-# Start the application
-CMD ["npm", "run", "start:prod"]
+# Run the Go application
+CMD ["./planit"]
